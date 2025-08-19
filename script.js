@@ -34,22 +34,41 @@ fileInput.addEventListener("input", () => {
     activeScreen(displayCard);
 });
 
-startBtn.addEventListener("click", () => {
+startBtn.addEventListener("click", async () => {
+    if (!file) return alert("Please upload an image first!");
+
+    const formData = new FormData();
     formData.append("image_file", file);
-    fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "X-Api-key": API_KEY,
-        },
-       body: formData,
-    })
-    .then((res) => res.blob())
-    .then((blob) => {
+
+    startBtn.textContent = "Processing...";
+    startBtn.disabled = true;
+
+    try {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "X-Api-Key": API_KEY,
+            },
+            body: formData,
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error("API Error: " + errorText);
+        }
+
+        const blob = await res.blob();
         reader.readAsDataURL(blob);
         reader.onloadend = () => {
             imageAfter.src = reader.result;
             downloadHref.setAttribute("href", reader.result);
+            activeScreen(downloadCard);
         };
-        activeScreen(downloadCard);
-    });
+    } catch (err) {
+        alert("Failed: " + err.message);
+        console.error(err);
+    } finally {
+        startBtn.textContent = "Remove Background";
+        startBtn.disabled = false;
+    }
 });
