@@ -12,7 +12,7 @@ const reader = new FileReader();
 const formData = new FormData();
 let file = null;
 const API_URL = "https://api.remove.bg/v1.0/removebg";
-const API_KEY = "MKcutZL9EBkjFmhEEtjkggqP";
+const API_KEY = "mfmYDT8JYX6kAxcMkL8We3GQ";
 
 const activeScreen = (screen) => {
     addCard.style.display = "none";
